@@ -12,3 +12,9 @@ const char* password = "PASSWORD";
 ```
 
 Now flash the sketch to your ESP32 using the Arduino IDE (or equivalent)
+
+![Front of the Mini Binary Clock](https://github.com/senwerks/esp32-binary-clock/blob/main/Mini-Binary-Clock-Front.jpg?raw=true)
+
+![Back of the Mini Binary Clock](https://github.com/senwerks/esp32-binary-clock/blob/main/Mini-Binary-Clock-Back.jpg?raw=true)
+
+![Inside the Mini Binary Clock](https://github.com/senwerks/esp32-binary-clock/blob/main/Mini-Binary-Clock-Wiring.jpg?raw=true)
