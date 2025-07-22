@@ -23,17 +23,23 @@ const int   daylightOffset_sec = 0;
 // Create a NeoPixel object
 Adafruit_NeoPixel strip(NUM_LEDS, DATA_PIN, NEO_GRB + NEO_KHZ800);
 
-// Startup sequence colors (animates upwards in lines, bottom to top)
-uint32_t startupColor1 = strip.Color(41, 0, 27);     // Bottom row
-uint32_t startupColor2 = strip.Color(1, 34, 42);     // 2nd row
-uint32_t startupColor3 = strip.Color(5, 54, 36);     // 3rd row
-uint32_t startupColor4 = strip.Color(59, 58, 22);    // Top row
+// Startup sequence colours (animates upwards in lines, bottom to top)
+uint32_t startupColour1 = strip.Color(21, 0, 14);     // Bottom row
+uint32_t startupColour2 = strip.Color(1, 17, 21);     // 2nd row
+uint32_t startupColour3 = strip.Color(3, 27, 18);     // 3rd row
+uint32_t startupColour4 = strip.Color(30, 29, 11);    // Top row
 
+// Status indicator colours
+uint32_t wifiConnectingColour = strip.Color(2, 32, 32);    // Blue
+uint32_t timeSuccessColour = strip.Color(7, 32, 3);        // Green
+uint32_t errorColour = strip.Color(41, 5, 11);             // Red
 
-// Status indicator colors
-uint32_t wifiConnectingColor = strip.Color(0, 0, 16);  // Blue
-uint32_t timeSuccessColor = strip.Color(0, 16, 0);     // Green
-uint32_t errorColor = strip.Color(16, 0, 0);           // Red
+// Binary "on" colours (Swaps between these two as the seconds tick)
+uint32_t binaryOnColour = strip.Color(7, 32, 3);     // Darker Green
+uint32_t binaryOnColour2 = strip.Color(4, 16, 2);   // Lighter Green
+
+// Binary "off" colour
+uint32_t binaryOffColour = strip.Color(2, 8, 8);    // Blue
 
 // System status flag
 bool systemReady = false;
@@ -109,12 +115,12 @@ void startupSequence() {
   delay(200);
   
   // Light up each row from bottom to top
-  uint32_t colors[4] = {startupColor1, startupColor2, startupColor3, startupColor4};
+  uint32_t colours[4] = {startupColour1, startupColour2, startupColour3, startupColour4};
   
   for (int row = 3; row >= 0; row--) { // Start from bottom row (index 3)
     for (int col = 0; col < 4; col++) {
       int ledIndex = ledMap[row][col];
-      strip.setPixelColor(ledIndex, colors[3-row]); // Use appropriate color
+      strip.setPixelColor(ledIndex, colours[3-row]); // Use appropriate colour
     }
     strip.show();
     delay(500); // Half second delay between rows
@@ -154,7 +160,7 @@ bool connectToWiFi() {
         strip.clear();
       } else {
         for (int i = 0; i < NUM_LEDS; i++) {
-          strip.setPixelColor(i, wifiConnectingColor);
+          strip.setPixelColor(i, wifiConnectingColour);
         }
       }
       strip.show();
@@ -207,7 +213,7 @@ void successIndication() {
   for (int i = 0; i < 3; i++) {
     // Turn all LEDs green
     for (int led = 0; led < NUM_LEDS; led++) {
-      strip.setPixelColor(led, timeSuccessColor);
+      strip.setPixelColor(led, timeSuccessColour);
     }
     strip.show();
     delay(300);
@@ -225,7 +231,7 @@ void errorMode() {
   while (true) {
     // Turn all LEDs red
     for (int i = 0; i < NUM_LEDS; i++) {
-      strip.setPixelColor(i, errorColor);
+      strip.setPixelColor(i, errorColour);
     }
     strip.show();
     delay(500);
@@ -255,6 +261,14 @@ int getCurrentTimeAsHHMM() {
 }
 
 void displayBinary(int number) {
+  // Get current seconds to determine which "on" color to use
+  struct tm timeinfo;
+  getLocalTime(&timeinfo);
+  int seconds = timeinfo.tm_sec;
+  
+  // Alternate between the two "on" colours based on seconds
+  uint32_t currentOnColour = (seconds % 2 == 0) ? binaryOnColour : binaryOnColour2;
+  
   for (int col = 0; col < 4; col++) {
     // Extract each digit from the number (rightmost digit first)
     int digit;
@@ -274,11 +288,11 @@ void displayBinary(int number) {
       bool isSet = (digit >> row) & 1;
 
       if (isSet) {
-        // Set a random color for each LED that's on
-        strip.setPixelColor(ledIndex, strip.Color(random(0, 32), random(0, 32), random(0, 32)));
+        // Use the alternating "on" colour
+        strip.setPixelColor(ledIndex, currentOnColour);
       } else {
-        // Turn off the LED if the bit is not set
-        strip.setPixelColor(ledIndex, strip.Color(0, 0, 0));
+        // Use the "off" colour instead of turning the LED completely off
+        strip.setPixelColor(ledIndex, binaryOffColour);
       }
     }
   }
