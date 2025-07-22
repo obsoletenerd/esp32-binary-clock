@@ -30,16 +30,16 @@ uint32_t startupColour3 = strip.Color(3, 27, 18);     // 3rd row
 uint32_t startupColour4 = strip.Color(30, 29, 11);    // Top row
 
 // Status indicator colours
-uint32_t wifiConnectingColour = strip.Color(2, 32, 32);    // Blue
-uint32_t timeSuccessColour = strip.Color(7, 32, 3);        // Green
+uint32_t wifiConnectingColour = strip.Color(2, 16, 8);    // Blue
+uint32_t timeSuccessColour = strip.Color(6, 16, 3);        // Green
 uint32_t errorColour = strip.Color(41, 5, 11);             // Red
 
 // Binary "on" colours (Swaps between these two as the seconds tick)
-uint32_t binaryOnColour = strip.Color(7, 32, 3);     // Darker Green
+uint32_t binaryOnColour = strip.Color(6, 24, 3);     // Darker Green
 uint32_t binaryOnColour2 = strip.Color(4, 16, 2);   // Lighter Green
 
 // Binary "off" colour
-uint32_t binaryOffColour = strip.Color(2, 8, 8);    // Blue
+uint32_t binaryOffColour = strip.Color(1, 4, 4);    // Very very dark/soft Blue
 
 // System status flag
 bool systemReady = false;
